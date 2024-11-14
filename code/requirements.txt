@@ -1,0 +1,305 @@
+Flask
+requests
+google-cloud-translate
+google-cloud-texttospeech
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Tourist Spots</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            padding-top: 20px;
+        }
+        .card-body h3,
+        .card-body h4,
+        .card-body h5 {
+            font-weight: 700;
+            color: #343a40;
+        }
+        .card-body p {
+            font-weight: 400;
+            color: #6c757d;
+        }
+        .carousel-inner img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .carousel-item.active,
+        .carousel-item-next,
+        .carousel-item-prev {
+            display: flex;
+            justify-content: center;
+        }
+        .spot-card,
+        .cafe-card,
+        .restaurant-card {
+            flex: 0 0 auto;
+            width: 250px;
+            margin-right: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .spot-card:hover,
+        .cafe-card:hover,
+        .restaurant-card:hover {
+            transform: scale(1.1);
+        }
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px;
+        }
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+        .modal-fullscreen {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+        }
+        .modal-body img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .review {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .review h5 {
+            margin-top: 0;
+            font-weight: 700;
+            color: #343a40;
+        }
+        .review p {
+            font-weight: 400;
+            color: #6c757d;
+        }
+        .reviews-container,
+        .nearby-places-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .card-body {
+            position: relative;
+            padding: 20px;
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .overview {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .overview h3 {
+            color: #ffffff;
+        }
+        .overview p {
+            color: #ffffff;
+            font-size: 16px;
+        }
+        .spot-card-title {
+            color: #007bff;
+            font-size: 1.2em;
+        }
+        .modal-body p {
+            color: #495057;
+        }
+        .modal-body audio {
+            margin-top: 20px;
+        }
+        .spot-details {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .spot-details h5 {
+            color: #343a40;
+            font-weight: 700;
+        }
+        .spot-details p {
+            color: #495057;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+        .spot-details p strong {
+            color: #343a40;
+            font-weight: 700;
+        }
+        .map-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: url('https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png') no-repeat center center;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .map-icon:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Top Tourist Spots</h1>
+        <div class="card mb-5">
+            <div class="card-body">
+                <div class="overview">
+                    <h3>{{ start_location['name'] }}</h3>
+                    <p><strong>Overview:</strong> {{ start_location['vicinity'] }}</p>
+                </div>
+                <div class="mt-3">
+                    <h4>Reviews</h4>
+                    <div class="reviews-container">
+                        {% for review in start_location['reviews'] %}
+                            <div class="review">
+                                <h5>{{ review['author_name'] }}</h5>
+                                <p>{{ review['text'] }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4>Top 5 Tourist Spots</h4>
+        <div class="carousel">
+            {% for spot in spots %}
+                <div class="card spot-card" data-toggle="modal" data-target="#spotModal{{ loop.index }}">
+                    <img src="{{ spot.photo_url }}" class="card-img-top" alt="{{ spot.name }}">
+                    <!-- <div class="map-icon" onclick="window.open('https://www.google.com/maps/dir/?api=1&origin={{ start_location['name'] }}&destination={{ spot.name }}')"></div> 
+                    <div class="card-body">
+                        <h5 class="spot-card-title">{{ spot.name }}</h5>
+                        <p class="card-text">{{ spot.vicinity }}</p>
+                        <p class="card-text"><strong>Rating:</strong> {{ spot.rating }}</p>
+                    </div>
+                </div>
+                <div class="modal fade" id="spotModal{{ loop.index }}" tabindex="-1" aria-labelledby="spotModalLabel{{ loop.index }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="spotModalLabel{{ loop.index }}">{{ spot.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ spot.photo_url }}" class="img-fluid mb-3" alt="{{ spot.name }}">
+                                <div class="spot-details">
+                                    <p><strong>Location:</strong> {{ spot.vicinity }}</p>
+                                    <p><strong>Overview:</strong> {{ spot.description }}</p>
+                                    <p><strong>Rating:</strong> {{ spot.rating }}</p>
+                                    <p><strong>Distance:</strong> {{ spot.distance }} km</p>
+                                    <form method="POST" action="{{ url_for('like_place') }}">
+                                        <input type="hidden" name="place_id" value="{{ spot.place_id }}">
+                                        <input type="hidden" name="place_name" value="{{ spot.name }}">
+                                        <input type="hidden" name="place_vicinity" value="{{ spot.vicinity }}">
+                                        <input type="hidden" name="place_photo_url" value="{{ spot.photo_url }}">
+                                        <input type="hidden" name="place_rating" value="{{ spot.rating }}">
+                                        <button class="like-btn" data-place-id="{{ spot.place_id }}" data-place-name="{{ spot.name }}" data-place-vicinity="{{ spot.vicinity }}" data-place-photo-url="{{ spot.photo_url }}" data-place-rating="{{ spot.rating }}">Like</button>
+                                    </form>
+                                </div>
+                                <audio controls>
+                                    <source src="{{ url_for('static', filename=spot.audio) }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <div class="mt-3">
+                                    <h4>Reviews</h4>
+                                    <div class="reviews-container">
+                                        {% for review in spot.reviews %}
+                                            <div class="review">
+                                                <h5>{{ review.author_name }}</h5>
+                                                <p>{{ review.text }}</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <form action="{{ url_for('recommend') }}" method="post" class="mt-4">
+            <input type="hidden" name="latitude" value="{{ request.form['latitude'] }}">
+            <input type="hidden" name="longitude" value="{{ request.form['longitude'] }}">
+            <input type="hidden" name="radius" value="{{ request.form['radius'] }}">
+            <button type="submit" class="btn btn-primary">Recommend More Places</button>
+        </form>
+        <a href="/" class="btn btn-primary mt-4">Back to Home</a>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      
+        $(document).ready(function() {
+            $('.like-btn').click(function() {
+                var placeId = $(this).data('place-id');
+                var placeName = $(this).data('place-name');
+                var placeVicinity = $(this).data('place-vicinity');
+                var placePhotoUrl = $(this).data('place-photo-url');
+                var placeRating = $(this).data('place-rating');
+
+                $.ajax({
+                    url: "{{ url_for('like_place') }}",
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({
+                        place_id: placeId,
+                        place_name: placeName,
+                        place_vicinity: placeVicinity,
+                        place_photo_url: placePhotoUrl,
+                        place_rating: placeRating
+                    }),
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('An error occurred while liking the place.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> -->

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourism Finder</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f0e6ff;
+            --secondary-color: #fff5f5;
+            --accent-color: #ffb3ba;
+            --text-color: #6b5b95;
+            --background-color: #e9ecef;
+            --button-color: #b3d4fc;
+            --button-hover-color: #a0c4f6;
+        }
+
+        body, html {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .navbar .navbar-brand, .navbar .nav-link {
+            color: var(--text-color);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .navbar .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+
+        .form-control, .btn, .custom-radius {
+            border-radius: 20px;
+            background-color: #fafafa;
+            border: 1px solid #d6e2ff;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .btn:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(255, 179, 186, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff9da6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(107, 91, 149, 0.1);
+        }
+
+        .btn-success {
+            background-color: var(--button-color);
+            border: none;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .btn-success:hover {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(107, 91, 149, 0.1);
+        }
+
+        .custom-radius {
+            display: none;
+        }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .search-container {
+                width: 40%;
+            }
+
+            .map-container {
+                width: 60%;
+            }
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6JXdrY5SNL31rPWL1RUrln15ymEolLWQ&libraries=places"></script>
+    <script>
+        let map, marker, infoWindow, autocomplete;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 13
+            });
+
+            infoWindow = new google.maps.InfoWindow;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        map.setCenter(pos);
+                        marker = new google.maps.Marker({
+                            position: pos,
+                            map: map,
+                            draggable: true,
+                            title: "You are here"
+                        });
+                        marker.addListener('dragend', function (event) {
+                            document.getElementById("latitude").value = this.getPosition().lat();
+                            document.getElementById("longitude").value = this.getPosition().lng();
+                        });
+                        infoWindow.setPosition(pos);
+                        infoWindow.setContent('Location found.');
+                        infoWindow.open(map, marker);
+                        document.getElementById("latitude").value = pos.lat;
+                        document.getElementById("longitude").value = pos.lng;
+                    },
+                    () => {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    }
+                );
+            } else {
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+
+            autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('search-input'), { types: ['geocode'] }
+            );
+
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    return;
+                }
+
+                map.setCenter(place.geometry.location);
+                if (marker) {
+                    marker.setMap(null);
+                }
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: place.geometry.location,
+                    draggable: true,
+                    title: place.formatted_address
+                });
+                marker.addListener('dragend', function (event) {
+                    document.getElementById("latitude").value = this.getPosition().lat();
+                    document.getElementById("longitude").value = this.getPosition().lng();
+                });
+                document.getElementById("latitude").value = place.geometry.location.lat();
+                document.getElementById("longitude").value = place.geometry.location.lng();
+            });
+
+            document.getElementById("find-location-button").addEventListener('click', function () {
+                const searchInput = document.getElementById("search-input").value;
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'address': searchInput }, function (results, status) {
+                    if (status === 'OK') {
+                        map.setCenter(results[0].geometry.location);
+                        if (marker) {
+                            marker.setMap(null);
+                        }
+                        marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            draggable: true,
+                            title: results[0].formatted_address
+                        });
+                        marker.addListener('dragend', function (event) {
+                            document.getElementById("latitude").value = this.getPosition().lat();
+                            document.getElementById("longitude").value = this.getPosition().lng();
+                        });
+                        document.getElementById("latitude").value = results[0].geometry.location.lat();
+                        document.getElementById("longitude").value = results[0].geometry.location.lng();
+                    } else {
+                        alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            });
+        }
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation
+                ? 'Error: The Geolocation service failed.'
+                : 'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+
+        function toggleCustomRadius() {
+            const customRadiusInput = document.getElementById("custom-radius");
+            if (document.getElementById("radius").value === "custom") {
+                customRadiusInput.style.display = "block";
+            } else {
+                customRadiusInput.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">Tourism Finder</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Hello, {{ current_user.username }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('liked_places') }}">Liked Places</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('account') }}">Account</a>
+                    </li>
+                    
+                </li>
+                
+                    
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                    
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Welcome to the Tourism Finder</h1>
+        <div class="content">
+            <div class="search-container">
+                <form method="POST" action="/find_spots">
+                    <div class="form-group">
+                        <input id="search-input" type="text" class="form-control" placeholder="Search for places">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" id="find-location-button" class="btn btn-primary btn-block">Find Location</button>
+                    </div>
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                    <div class="form-group">
+                        <label for="language">Language:</label>
+                        <select id="language" name="language" class="form-control" required>
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="bn">Bengali</option>
+                            <option value="te">Telugu</option>
+                            <option value="mr">Marathi</option>
+                            <option value="ta">Tamil</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="pa">Punjabi</option>
+                            <option value="or">Odia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="radius">Search Radius:</label>
+                        <select id="radius" name="user_radius" class="form-control" onchange="toggleCustomRadius()" required>
+                            <option value="5">5 km</option>
+                            <option value="10">10 km</option>
+                            <option value="15">15 km</option>
+                            <option value="20">20 km</option>
+                            <option value="50">50 km</option>
+                            <option value="60">60 km</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <input type="number" id="custom_radius" name="custom_user_radius" class="form-control mt-2 custom-radius" placeholder="Enter custom radius in meters">
+                    </div>
+                     <!-- <div class="form-group" id="custom-radius" style="display: none;">
+                        <label for="custom_radius">Custom Radius (km):</label>
+                        <!-- <input type="number" name="custom_user_radius" id="custom_radius" class="form-control" min="1" max="70"> 
+                        <input type="number" id="custom_radius" name="custom_user_radius" class="form-control mt-2 custom-radius" placeholder="Enter custom radius in meters">
+                    </div>  -->
+
+
+
+
+
+
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-block">Find Spots</button>
+                    </div>
+                </form>
+            </div>
+            <div id="map" class="map-container mt-3"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+    function toggleCustomRadius() {
+            const customRadiusInput = document.getElementById("custom_radius");
+            if (document.getElementById("radius").value === "custom") {
+                customRadiusInput.style.display = "block";
+            } else {
+                customRadiusInput.style.display = "none";
+            }
+        }
+</script>
+    <footer class="footer">
+        &copy; 2024 Tourism Finder. All rights reserved.
+    </footer>
+</body>
+</html>

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Recommended Spots{% endblock %}
+{% block content %}
+
+<!-- 
+<div class="container mt-5">
+    <h1 class="mb-4" style="color: #6b5b95;">Recommended Tourist Spots</h1>
+
+    {% if spots %}
+        <div class="row">
+            {% for spot in spots %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                    <img src="{{ spot.photo_url }}" class="card-img-top" alt="{{ spot.name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body" style="background-color: #f0e6ff;">
+                        <h5 class="card-title" style="color: #6b5b95;">{{ spot.name }}</h5>
+                        <p class="card-text" style="color: #6c757d;">{{ spot.vicinity }}</p>
+                        <p class="card-text" style="color: #6c757d;"><strong>Rating:</strong> {{ spot.rating }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: #6b5b95;">No recommendations found based on your preferences. Try adjusting your search criteria.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-4" style="background-color: #ffb3ba; border-color: #ffb3ba;">Back to Home</a>
+</div> -->
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center" style="color: #6b5b95;"> Personalized Tourist Spots</h1>
+
+    {% if spots %}
+        <div class="row">
+            {% for spot in spots %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s;">
+                    <img src="{{ spot.photo_url }}" class="card-img-top" alt="{{ spot.name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column" style="background-color: #f0e6ff;">
+                        <h5 class="card-title" style="color: #6b5b95;">{{ spot.name }}</h5>
+                        <p class="card-text" style="color: #6c757d;">{{ spot.vicinity }}</p>
+                        <div class="mt-auto">
+                            <p class="card-text" style="color: #6c757d;">
+                                <strong>Rating:</strong> 
+                                {% for i in range(5) %}
+                                    {% if i < spot.rating|int %}
+                                        <i class="fas fa-star" style="color: #ffd700;"></i>
+                                    {% else %}
+                                        <i class="far fa-star" style="color: #ffd700;"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                ({{ spot.rating }})
+                            </p>
+                            <p class="card-text" style="color: #6c757d;"><strong>Distance:</strong> {{ "%.2f"|format(spot.distance) }} km</p>
+                            <button class="btn btn-info btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#modal{{ loop.index }}">
+                                More Info
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm mt-2 like-btn" data-spot-id="{{ spot.place_id }}">
+                                <i class="far fa-heart"></i> Like
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="modal{{ loop.index }}" tabindex="-1" aria-labelledby="modalLabel{{ loop.index }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel{{ loop.index }}">{{ spot.name }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="{{ spot.photo_url }}" class="img-fluid rounded" alt="{{ spot.name }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Address:</strong> {{ spot.vicinity }}</p>
+                                    <p><strong>Rating:</strong> {{ spot.rating }} ({{ spot.user_ratings_total }} reviews)</p>
+                                    <p><strong>Distance:</strong> {{ "%.2f"|format(spot.distance) }} km</p>
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ spot.name|urlencode }}+{{ spot.vicinity|urlencode }}" class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="fas fa-map-marker-alt"></i> Open in Google Maps
+                                    </a>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6>Description</h6>
+                            <p>{{ spot.description|default('No description available.') }}</p>
+                            {% if spot.reviews %}
+                                <h6>Top Reviews</h6>
+                                <div class="reviews-carousel">
+                                    {% for review in spot.reviews[:3] %}
+                                        <div class="review-card">
+                                            <p><strong>{{ review.author_name }}</strong> ({{ review.rating }} stars)</p>
+                                            <p>{{ review.text|truncate(150) }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> No recommendations found based on your preferences. Try adjusting your search criteria.
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-primary" style="background-color: #ffb3ba; border-color: #ffb3ba;">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">Recommended Spots Map</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="map" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+
+{% endblock %}

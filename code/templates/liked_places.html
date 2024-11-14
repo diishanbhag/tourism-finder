@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Liked Places{% endblock %}
+{% block content %}
+
+<!-- <div class="container mt-5">
+    <h1 class="mb-4">Liked Places</h1>
+    
+    {% if liked_places %}
+        <p>Number of liked places: {{ liked_places|length }}</p>
+        <div class="row">
+            {% for place in liked_places %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ place.place_photo_url }}" class="card-img-top" alt="{{ place.place_name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ place.place_name }}</h5>
+                        <p>{{ place.place_vicinity }}</p>
+                        <p><strong>Rating:</strong> {{ place.place_rating }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You haven't liked any places yet.</p>
+    {% endif %}
+</div> -->
+
+
+
+
+
+
+
+<div class="container mt-5">
+    <h1 class="mb-4">Liked Places</h1>
+
+    {% if liked_places %}
+        <p>Number of liked places: {{ liked_places|length }}</p>
+
+        <div class="row">
+            {% for place in liked_places %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ place.place_photo_url }}" class="card-img-top" alt="{{ place.place_name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ place.place_name }}</h5>
+                            <p class="card-text">{{ place.place_vicinity }}</p>
+                            <p class="card-text"><strong>Rating:</strong> {{ place.place_rating }}</p>
+                            <button class="btn btn-danger" onclick="unlikePlace(this, '{{ place.place_id }}')">Unlike</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You haven't liked any places yet.</p>
+    {% endif %}
+</div>
+
+<script>
+function unlikePlace(button, placeId) {
+    fetch('/like_place', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'place_id': placeId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'unliked') {
+            // Remove the card from the DOM
+            button.closest('.col-md-4').remove();
+            // Update the count of liked places
+            let countElement = document.querySelector('p');
+            let count = parseInt(countElement.textContent.match(/\d+/)[0]) - 1;
+            countElement.textContent = `Number of liked places: ${count}`;
+            if (count === 0) {
+                document.querySelector('.container').innerHTML = '<h1 class="mb-4">Liked Places</h1><p>You haven\'t liked any places yet.</p>';
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">About Tourism Finder</h1>
+    <div class="about-card">
+        <div class="about-info">
+            <h2>Our Mission</h2>
+            <p>Tourism Finder is dedicated to helping you discover the best tourist spots near you. Our goal is to make your travel planning seamless and enjoyable by providing you with personalized recommendations based on your preferences.</p>
+        </div>
+        <div class="about-info">
+            <h2>Features</h2>
+            <ul>
+                <li>Auto-complete search for locations</li>
+                <li>Top 5 nearest tourist spots</li>
+                <li>Language preferences</li>
+                <li>Translated descriptions and audio guides</li>
+                <li>Detailed information about starting locations</li>
+                <li>Personalized user experience with saved preferences and liked places</li>
+            </ul>
+        </div>
+        <div class="about-info">
+            <h2>Contact Us</h2>
+            <p>If you have any questions or feedback, feel free to reach out to us at <a href="mailto:support@tourismfinder.com">support@tourismfinder.com</a>.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #f0e6ff;
+        --secondary-color: #fff5f5;
+        --accent-color: #ffb3ba;
+        --text-color: #6b5b95;
+        --input-bg: #fafafa;
+    }
+    
+    body {
+        background-color: var(--secondary-color);
+        color: var(--text-color);
+        font-family: 'Arial', sans-serif;
+    }
+    
+    .container {
+        max-width: 800px;
+    }
+    
+    h1, h2 {
+        color: var(--text-color);
+        font-family: 'Georgia', serif;
+    }
+    
+    .about-card {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(107, 91, 149, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .about-info {
+        margin-bottom: 2rem;
+    }
+    
+    a {
+        color: var(--accent-color);
+        text-decoration: none;
+    }
+    
+    a:hover {
+        color: var(--text-color);
+        text-decoration: underline;
+    }
+</style>
+
+{% endblock %}

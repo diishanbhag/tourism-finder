@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+{% block content %}
+
+<nav class="navbar">
+    <a class="navbar-brand" href="#">Tourism Finder</a>
+    <ul class="nav-links">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+        </li>
+        
+    </ul>
+</nav>
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Account</h1>
+    <div class="profile-card">
+        <div class="profile-info">
+            <h2>Personal Information</h2>
+            <form method="POST" action="{{ url_for('account') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}">
+                </div>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">New Password (leave blank to keep current):</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Personal Info</button>
+            </form>
+        </div>
+
+        <div class="preferences-section">
+            <h3>My Travel Preferences</h3>
+            <form method="POST" action="{{ url_for('account') }}" class="update-form">
+                <div class="mb-3">
+                    <label class="form-label">Select your preferences:</label>
+                    <div class="card-grid">
+                        <div class="card preference-card" data-value="hillstation">
+                            <h5 class="card-title"><i class="fas fa-mountain"></i> Hill Station</h5>
+                        </div>
+                        <div class="card preference-card" data-value="beach">
+                            <h5 class="card-title"><i class="fas fa-umbrella-beach"></i> Beach</h5>
+                        </div>
+                        <div class="card preference-card" data-value="amusementparks">
+                            <h5 class="card-title"><i class="fas fa-ticket-alt"></i> Amusement Parks</h5>
+                        </div>
+                        <div class="card preference-card" data-value="museum">
+                            <h5 class="card-title"><i class="fas fa-landmark"></i> Museum</h5>
+                        </div>
+                        <div class="card preference-card" data-value="historicsites">
+                            <h5 class="card-title"><i class="fas fa-monument"></i> Historic Sites</h5>
+                        </div>
+                    </div>
+                    <input type="hidden" id="preferences" name="preferences" value="{{ current_user.preferences or '' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Preferences</button>
+            </form>
+            <div class="preferences-list">
+                {% if current_user.preferences %}
+                    {% for preference in current_user.preferences.split(',') %}
+                        <span class="preference-tag">{{ preference }}</span>
+                    {% endfor %}
+                {% else %}
+                    <p>No preferences set yet. Let's add some magic to your travels!</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="preferences-section">
+            <h3>My Favorite Activities</h3>
+            <form method="POST" action="{{ url_for('account') }}" class="update-form">
+                <div class="mb-3">
+                    <label class="form-label">Select your favorite activities:</label>
+                    <div class="card-grid">
+                        <div class="card activity-card" data-value="swimming">
+                            <h5 class="card-title"><i class="fas fa-swimming-pool"></i> Swimming</h5>
+                        </div>
+                        <div class="card activity-card" data-value="sightseeing">
+                            <h5 class="card-title"><i class="fas fa-camera"></i> Sightseeing</h5>
+                        </div>
+                        <div class="card activity-card" data-value="foodtasting">
+                            <h5 class="card-title"><i class="fas fa-utensils"></i> Food Tasting</h5>
+                        </div>
+                        <div class="card activity-card" data-value="hiking">
+                            <h5 class="card-title"><i class="fas fa-hiking"></i> Hiking</h5>
+                        </div>
+                        <div class="card activity-card" data-value="adventure">
+                            <h5 class="card-title"><i class="fas fa-mountain"></i> Adventure</h5>
+                        </div>
+                    </div>
+                    <input type="hidden" id="activities" name="activities" value="{{ current_user.activities or '' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Activities</button>
+            </form>
+            <div class="preferences-list">
+                {% if current_user.activities %}
+                    {% for activity in current_user.activities.split(',') %}
+                        <span class="preference-tag">{{ activity }}</span>
+                    {% endfor %}
+                {% else %}
+                    <p>No activities set yet. Time to plan your adventures!</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="preferences-section">
+            <h3>Rating preferences</h3>
+            <form method="POST" action="{{ url_for('account') }}" class="update-form">
+                <div class="mb-3">
+                    <label class="form-label">Select your preferred accommodation:</label>
+                    <div class="card-grid">
+                        <div class="card rating-card" data-value="5">
+                            <h5 class="card-title">5 <i class="fas fa-star"></i> </h5>
+                        </div>
+                        <div class="card rating-card" data-value="4">
+                            <h5 class="card-title">4 <i class="fas fa-star"></i></h5>
+                        </div>
+                        <div class="card rating-card" data-value="3">
+                            <h5 class="card-title">3 <i class="fas fa-star"></i></h5>
+                        </div>
+                        <div class="card rating-card" data-value="2">
+                            <h5 class="card-title">2 <i class="fas fa-star"></i></h5>
+                        </div>
+                        <div class="card rating-card" data-value="1">
+                            <h5 class="card-title">1 <i class="fas fa-star"></i></h5>
+                        </div>
+                    </div>
+                    <input type="hidden" id="accommodation_rating" name="accommodation_rating" value="{{ current_user.ratings or '' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Accommodation Preference</button>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    :root {
+        --primary-color: #f0e6ff;
+        --secondary-color: #fff5f5;
+        --accent-color: #ffb3ba;
+        --text-color: #6b5b95;
+        --input-bg: #fafafa;
+    }
+    
+    body {
+        background-color: var(--secondary-color);
+        color: var(--text-color);
+        font-family: 'Arial', sans-serif;
+    }
+    
+    .container {
+        max-width: 800px;
+    }
+    
+    h1, h2, h3 {
+        color: var(--text-color);
+        font-family: 'Georgia', serif;
+    }
+    
+    .profile-card {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(107, 91, 149, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-control {
+        background-color: var(--input-bg);
+        border: 1px solid var(--accent-color);
+    }
+    
+    .btn-primary {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--text-color);
+        border-color: var(--text-color);
+        color: #fff;
+    }
+    
+    .preferences-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .preference-tag {
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 5px rgba(107, 91, 149, 0.1);
+    }
+    
+    .star-rating {
+        display: inline-block;
+        direction: rtl;
+    }
+    
+    .star-rating input {
+        display: none;
+    }
+    
+    .star-rating label {
+        color: #ddd;
+        font-size: 2rem;
+        padding: 0 0.1rem;
+        cursor: pointer;
+    }
+    
+    .star-rating label:before {
+        content: '\2605';
+    }
+    
+    .star-rating input:checked ~ label {
+        color: #ffca28;
+    }
+    
+    .preferences-section {
+        background-color: var(--primary-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+
+    }
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .card {
+        background-color: var(--input-bg);
+        border: 2px solid var(--accent-color);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover, .card.selected {
+        background-color: var(--accent-color);
+        color: #fff;
+    }
+
+    .card i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+
+    .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(107, 91, 149, 0.1);
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function setupCardSelection(cardClass, hiddenInputId) {
+            const cards = document.querySelectorAll(cardClass);
+            const hiddenInput = document.getElementById(hiddenInputId);
+
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    updateHiddenInput();
+                });
+            });
+
+            function updateHiddenInput() {
+                const selectedValues = Array.from(cards)
+                    .filter(card => card.classList.contains('selected'))
+                    .map(card => card.dataset.value);
+                hiddenInput.value = selectedValues.join(',');
+            }
+
+            // Initialize selections based on current values
+            const currentValues = hiddenInput.value.split(',');
+            cards.forEach(card => {
+                if (currentValues.includes(card.dataset.value)) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        setupCardSelection('.preference-card', 'preferences');
+        setupCardSelection('.activity-card', 'activities');
+        setupCardSelection('.rating-card', 'accommodation_rating');
+    });
+</script>
+
+
+
+{% endblock %}

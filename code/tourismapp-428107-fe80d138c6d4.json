@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "tourismapp-428107",
+  "private_key_id": "fe80d138c6d4643a30d50a018c2cdbd667dfe95e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCm3pDX8oPg2ljk\n6Bg5oCzxaNMB7RgNFqMDi4kinT7DZwSLOwtEIeIzz4lNZRExvcp9xm9OD1d+c3Z6\nOV/UYI2e60rzvs4c65GR9ghHFqF/YBoUC+eTNIqYs9YIZRYiN4a5uuJXPk6YHMNP\nasHjme/Y9cchb1OhRFOozQTYm8oDccs4wgkLo0TgvHRD+XHvhvpaV181Kn2dG6YK\n/eL4lgWl9dV9ac7owVnzljQQ0I3q+44HqddgJilTUyODC3NYy3a4ntSiCMJJqRqL\nbAEGsODClaTk68a28y7Qg5JdVFOr2gvVXmWJ/3feWP+ba8qWzIgOCtcyIIfS9T9s\ng1EctkJTAgMBAAECggEABEgKnFfPFWpUxI7F7FiVPp5rZ42/Q7q0dQdT/ezd6uKO\nRco+iEF8TcsB4Vf6AHY3p1F7kpunKYnp3MnzEP5nM9AirK1VGX3bzsxquvQ0MZH0\nKVaC2w6Kjc9zauS5FCirjsFiRE3Hc3SteDCrh9zvv/fSY6O5GBaqNNcJzEr2/G6Y\n1uHQYYNmVYmFppDs8dEurgIYUxWMa/4xkWqgp3uSDCuAUHjZLrEv3WLQ4/VwY6FR\n6llfyXWJ565fqYCoVrE3N+dlI7dkpKnoKCJCJvRIi3YZUn9UUlrcoWLLL1pjupfO\niVfgWoQPwssrpB33QUEnqyBj5PupjU1A6R/PzmpXpQKBgQDmIo3yGu2t57UXRnBH\ndVEGFdXdfO/FzPKHHBqMomSJA7FqY8BuwEToRV8paNWqVVM6k9fwJ7BDyUWOVoSy\npTsN54UJx1k3SZbrmZR7LoGP2PiKqV+H9/K2omn8cbrbqcCaSbhnYV1SyjpeNmcZ\nAzwv+bnvH1wVvUTJkyNK/gLxlwKBgQC5n7vGqEYra9fpCth75DrnEcQ3Kx4YVIUk\nxx9PnwIiUOKG9xPFeJY9rYCcKRwaAGzxiHstz74U2p/WgYGtPKcIDACW2HkjAh5j\n63Xj5kb9hWoiInr+Koj1l54HKxMGIa9PHYMswxlPgDlcANMoS0Lc8kfExZIMFgX9\nXaRkei1UpQKBgFaebOTSQ+Fv09ZF2d7bhjqPH2b1Ll45zJMT/d4vBT4Y2L8deoF0\n9rqh2baBUeKBqQjkOqOWnJ529Col4F5JGJgcKxPKJ4dKuHZG4P8YOwXEeY/fPii0\nJ3OcX933hIhHNUodMz4eBH0zxpJNUbK1aAL6sIQTPpqkGW7xZZhFUSBTAoGAciNg\nKTVLgGOdrbR3jSa3eWIZTvr6VGeUPxsZi7Hwc/1cbTT8OU5+w4ouLNeyaeKdGp+b\nbn3xGY2c/x8/B7Dl3DLVIewWAIrK+RHNucbdHAKvUjH1gtfQw4LpLuszlW+dBn7V\nK+8DXzkvC/2N2Zb9lDJ+IuaBeWEJadPsw8PEn+kCgYAXMYkU6XIW9MFvCtUI0iIl\nFQ7LooDbRE+ascAhWzkKjWKIy+pC6Bspi3PntRKZ+Vke5Q7T4XPRbV/woIDScxNN\n8yqGOxA4UDHbO1K25MMdWWDB66LRoi2YWuz7LKCq1R6ZBvOV3Kb+a1AUpf8GJbEB\n34+R6eR1QdA0hkgGflg0lw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "tourism-app@tourismapp-428107.iam.gserviceaccount.com",
+  "client_id": "110609475019909208029",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tourism-app%40tourismapp-428107.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

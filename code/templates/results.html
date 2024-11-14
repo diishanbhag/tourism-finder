@@ -1,0 +1,620 @@
+{% extends "base.html" %}
+{% block title %}Tourist Spots{% endblock %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Tourist Spots</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #fff5f5; /* Pastel pink background */
+            color: #6b5b95; /* Dark grey text */
+        }
+        .container {
+            padding-top: 20px;
+        }
+        .card-body h3,
+        .card-body h4,
+        .card-body h5 {
+            font-weight: 700;
+            color: #6b5b95; /* Dark grey text */
+        }
+        .card-body p {
+            font-weight: 400;
+            color: #fca7a7; /* Muted grey text */
+        }
+        .carousel-inner img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .carousel-item.active,
+        .carousel-item-next,
+        .carousel-item-prev {
+            display: flex;
+            justify-content: center;
+        }
+        .spot-card,
+        .cafe-card,
+        .restaurant-card {
+            flex: 0 0 auto;
+            width: 250px;
+            margin-right: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background-color: #ffffff; /* White card background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .spot-card:hover,
+        .cafe-card:hover,
+        .restaurant-card:hover {
+            transform: scale(1.1);
+        }
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px;
+        }
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+        .modal-fullscreen {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+        }
+        .modal-body img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .review {
+            background-color: #ffe5e5; /* Light grey background for reviews */
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .review h5 {
+            margin-top: 0;
+            font-weight: 700;
+            color: #6b5b95; /* Dark grey text */
+        }
+        .review p {
+            font-weight: 400;
+            color: #6b5b95; /* Muted grey text */
+        }
+        .reviews-container,
+        .nearby-places-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .card-body {
+            position: relative;
+            padding: 20px;
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .btn-primary {
+            background-color: #6b5b95; /* Pastel green */
+            border-color: #6b5b95; /* Pastel green border */
+        }
+        .btn-primary:hover {
+            background-color: #6b5b95; /* Darker pastel green on hover */
+            border-color: #6b5b95; /* Darker pastel green border on hover */
+        }
+
+        .navbar {
+            background-color: #f0e6ff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(107, 91, 149, 0.1);
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #6b5b95;
+            text-decoration: none;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        .nav-links a {
+            color: #6b5b95;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #ffb3ba;
+        }
+
+        .overview {
+            background-color: #ffadad; /* Pastel red */
+            color: #ffffff; /* White text */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .overview h3 {
+            color: #ffffff; /* White text */
+        }
+        .overview p {
+            color: #ffffff; /* White text */
+            font-size: 16px;
+        }
+        .spot-card-title {
+            color: #ff6f6f; /* Pastel pink text */
+            font-size: 1.2em;
+        }
+        .modal-body p {
+            color: #6b5b95; /* Dark grey text */
+        }
+        .modal-body audio {
+            margin-top: 20px;
+            
+        }
+        .spot-details {
+            padding: 15px;
+            background-color: #fff5f5; /* Light grey background */
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .spot-details h5 {
+            color: #6b5b95; /* Dark grey text */
+            font-weight: 700;
+        }
+        .spot-details p {
+            color: #ffadad; /* Dark grey text */
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+        .spot-details p strong {
+            color: #ffadad; /* Dark grey text */
+            font-weight: 700;
+        }
+        .map-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: url('https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png') no-repeat center center;
+            background-size: cover;
+            cursor: pointer;
+        }
+        
+        .map-icon:hover {
+            opacity: 0.8;
+        }
+
+
+
+
+        .hover-effect {
+    transition: all 0.3s ease;
+}
+
+.hover-effect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 15px;
+}
+
+.btn-primary {
+    background-color: #fca7a7;
+    border-color: #fca7a7;
+}
+
+.btn-primary:hover {
+    background-color: #fca7a7;
+    border-color: #fca7a7;
+}
+
+.btn-secondary {
+    background-color: #fca7a7;
+    border-color: #fca7a7;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #fb9090;
+    border-color: #fb9090;
+    color: #ffffff;
+}
+.map-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: url('https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png') no-repeat center center;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.map-icon:hover {
+    opacity: 0.8;
+}
+.footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .like-button.liked {
+    background-color: #ff6b6b;
+    color: white;
+}
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="#">Tourism Finder</a>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#"><i class="fas fa-globe-americas"></i> Destinations</a></li>
+            <li><a href="#"><i class="fas fa-concierge-bell"></i> Services</a></li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('account') }}">Account</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="mb-4">Top Tourist Spots</h1>
+        <div class="card mb-5">
+            <div class="card-body">
+                
+                <div class="overview">
+                    <h3>{{ start_location['name'] }}</h3>
+                    <p><strong>Overview:</strong> {{ start_location['vicinity'] }}</p>
+                </div>
+                <div class="mt-3">
+                    <h4>Reviews</h4>
+                    <div class="reviews-container">
+                        {% for review in start_location['reviews'] %}
+                            <div class="review">
+                                <h5>{{ review['author_name'] }}</h5>
+                                <p>{{ review['text'] }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4>Top 5 Tourist Spots</h4>
+        <div class="carousel">
+            {% for spot in spots %}
+                <div class="card spot-card" data-toggle="modal" data-target="#spotModal{{ loop.index }}">
+                    <img src="{{ spot.photo_url }}" class="card-img-top" alt="{{ spot.name }}">
+                    <div class="card-body">
+                        <div class="map-icon" onclick="openNavigation('{{ spot.latitude }}', '{{ spot.longitude }}', '{{ spot.name }}')"></div>
+                        <h5 class="spot-card-title">{{ spot.name }}</h5>
+                        <p class="card-text">{{ spot.vicinity }}</p>
+                        <p class="card-text"><strong>Rating:</strong> {{ spot.rating }}</p>
+                        <p class="card-text"><strong>Distance:</strong> {{ spot.distance }}</p>
+                        <button onclick="toggleLike(this, '{{ spot.place_id }}', '{{ spot.name }}', '{{ spot.vicinity }}', '{{ spot.rating }}', '{{ spot.photo_url }}')" class="like-button {% if spot.place_id in liked_place_ids %}liked{% endif %}">
+                            {% if spot.place_id in liked_place_ids %}Unlike{% else %}Like{% endif %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="spotModal{{ loop.index }}" tabindex="-1" aria-labelledby="spotModalLabel{{ loop.index }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="spotModalLabel{{ loop.index }}">{{ spot.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ spot.photo_url }}" class="img-fluid mb-3" alt="{{ spot.name }}">
+                                <div class="spot-details">
+                                    <p><strong>Location:</strong> {{ spot.vicinity }}</p>
+                                    <p><strong>Overview:</strong> {{ spot.description }}</p>
+                                    <p><strong>Rating:</strong> {{ spot.rating }}</p>
+                                    <p><strong>Distance:</strong> {{ spot.distance }} km</p>
+                                    <!-- <form method="POST" action="{{ url_for('like_place') }}">
+                                        <input type="hidden" name="place_id" value="{{ spot.place_id }}">
+                                        <input type="hidden" name="place_name" value="{{ spot.name }}">
+                                        <input type="hidden" name="place_vicinity" value="{{ spot.vicinity }}">
+                                        <input type="hidden" name="place_photo_url" value="{{ spot.photo_url }}">
+                                        <input type="hidden" name="place_rating" value="{{ spot.rating }}">
+                                        <!-- <button class="like-btn" data-place-id="{{ spot.place_id }}" data-place-name="{{ spot.name }}" data-place-vicinity="{{ spot.vicinity }}" data-place-photo-url="{{ spot.photo_url }}" data-place-rating="{{ spot.rating }}">Like</button> 
+                                    </form> -->
+                                    <!-- In the spot card -->
+                                    <button onclick="toggleLike(this, '{{ spot.place_id }}', '{{ spot.name }}', '{{ spot.vicinity }}', '{{ spot.rating }}', '{{ spot.photo_url }}')" class="like-button {% if spot.place_id in liked_place_ids %}liked{% endif %}">
+                                        {% if spot.place_id in liked_place_ids %}Unlike{% else %}Like{% endif %}
+                                    </button>
+                                    <button class="btn btn-primary mt-3" onclick="openNavigation('{{ spot.latitude }}', '{{ spot.longitude }}', '{{ spot.name }}')">Get Directions</button>
+                                </div>
+                                <audio controls>
+                                    <source src="{{ url_for('static', filename=spot.audio) }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <div class="mt-3">
+                                    <h4>Reviews</h4>
+                                    <div class="reviews-container">
+                                        {% for review in spot.reviews %}
+                                            <div class="review">
+                                                <h5>{{ review.author_name }}</h5>
+                                                <p>{{ review.text }}</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+        <h4 class="mt-5">Cafes Nearby</h4>
+        <div class="carousel">
+            {% for cafe in cafes %}
+                <div class="card cafe-card">
+                    <img src="{{ cafe.photo_url }}" class="card-img-top" alt="{{ cafe.name }}">
+                    <div class="card-body">
+                        <div class="map-icon" onclick="openNavigation('{{ cafe.latitude }}', '{{ cafe.longitude }}', '{{ cafe.name }}')"></div>
+                        <h5 class="spot-card-title">{{ cafe.name }}</h5>
+                        <p class="card-text">{{ cafe.vicinity }}</p>
+                        <p class="card-text"><strong>Rating:</strong> {{ cafe.rating }}</p>
+                        <p class="card-text"><strong>Distance:</strong> {{ cafe.distance }}</p>
+                    </div>
+                </div>
+                
+
+                <div class="modal fade" id="cafeModal{{ loop.index }}" tabindex="-1" aria-labelledby="cafeModalLabel{{ loop.index }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cafeModalLabel{{ loop.index }}">{{ cafe.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ cafe.photo_url }}" class="img-fluid mb-3" alt="{{ cafe.name }}">
+                                <div class="cafe-details">
+                                    <p><strong>Location:</strong> {{ cafe.vicinity }}</p>
+                                    <p><strong>Overview:</strong> {{ cafe.description }}</p>
+                                    <p><strong>Rating:</strong> {{ cafe.rating }}</p>
+                                    <p><strong>Distance:</strong> {{ cafe.distance }} km</p>
+                                    <form method="POST" action="{{ url_for('like_place') }}">
+                                        <input type="hidden" name="place_id" value="{{ cafe.place_id }}">
+                                        <input type="hidden" name="place_name" value="{{ cafe.name }}">
+                                        <input type="hidden" name="place_vicinity" value="{{ cafe.vicinity }}">
+                                        <input type="hidden" name="place_photo_url" value="{{ cafe.photo_url }}">
+                                        <input type="hidden" name="place_rating" value="{{ cafe.rating }}">
+                                        <!-- <button class="like-btn" data-place-id="{{ cafe.place_id }}" data-place-name="{{ cafe.name }}" data-place-vicinity="{{ cafe.vicinity }}" data-place-photo-url="{{ cafe.photo_url }}" data-place-rating="{{ cafe.rating }}">Like</button> -->
+                                    </form>
+                                    <button class="btn btn-primary mt-3" onclick="openNavigation('{{ cafe.latitude }}', '{{ cafe.longitude }}', '{{ cafe.name }}')">Get Directions</button>
+                                </div>
+                                <audio controls>
+                                    <source src="{{ url_for('static', filename=cafe.audio) }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <div class="mt-3">
+                                    <h4>Reviews</h4>
+                                    <div class="reviews-container">
+                                        {% for review in cafe.reviews %}
+                                            <div class="review">
+                                                <h5>{{ review.author_name }}</h5>
+                                                <p>{{ review.text }}</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+
+
+
+            {% endfor %}
+        </div>
+        <h4 class="mt-5">Restaurants Nearby</h4>
+        <div class="carousel">
+            {% for restaurant in restaurants %}
+                <div class="card restaurant-card">
+                    <img src="{{ restaurant.photo_url }}" class="card-img-top" alt="{{ restaurant.name }}">
+                    <div class="card-body">
+                        <div class="map-icon" onclick="openNavigation('{{ restaurant.latitude }}', '{{ restaurant.longitude }}', '{{ restaurant.name }}')"></div>
+                        <h5 class="spot-card-title">{{ restaurant.name }}</h5>
+                        <p class="card-text">{{ restaurant.vicinity }}</p>
+                        <p class="card-text"><strong>Rating:</strong> {{ restaurant.rating }}</p>
+                        <p class="card-text"><strong>Distance:</strong> {{ restaurant.distance }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <form action="{{ url_for('recommend') }}" method="post" class="d-inline-block">
+                <input type="hidden" name="latitude" value="{{ request.form['latitude'] }}">
+                <input type="hidden" name="longitude" value="{{ request.form['longitude'] }}">
+                <input type="hidden" name="radius" value="{{ request.form['radius'] }}">
+                <button type="submit" class="btn btn-primary btn-lg hover-effect mr-2">Recommend More Places</button>
+            </form>
+            <a href="/" class="btn btn-secondary btn-lg hover-effect">Back to Home</a>
+        </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // $(document).ready(function() {
+        //     $('.like-button').click(function() {
+        //         var button = $(this);
+        //         var placeId = button.data('place-id');
+        //         var placeName = button.data('place-name');
+        //         var placeVicinity = button.data('place-vicinity');
+        //         var placeRating = button.data('place-rating');
+        //         var placePhotoUrl = button.data('place-photo-url');
+        
+        //         $.ajax({
+        //             url: '/like_place',
+        //             method: 'POST',
+        //             data: {
+        //                 place_id: placeId,
+        //                 place_name: placeName,
+        //                 place_vicinity: placeVicinity,
+        //                 place_rating: placeRating,
+        //                 place_photo_url: placePhotoUrl
+        //             },
+        //             success: function(response) {
+        //                 if (response.status === 'liked') {
+        //                     button.text('Unlike');
+        //                     button.removeClass('btn-outline-primary').addClass('btn-primary');
+        //                 } else {
+        //                     button.text('Like');
+        //                     button.removeClass('btn-primary').addClass('btn-outline-primary');
+        //                 }
+        //             }
+        //         });
+        //     });
+        // });
+        function toggleLike(button, placeId, placeName, placeVicinity, placeRating, placePhotoUrl) {
+    fetch('/like_place', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'place_id': placeId,
+            'place_name': placeName,
+            'place_vicinity': placeVicinity,
+            'place_rating': placeRating,
+            'place_photo_url': placePhotoUrl
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'liked') {
+            button.textContent = 'Unlike';
+            button.classList.add('liked');
+        } else if (data.status === 'unliked') {
+            button.textContent = 'Like';
+            button.classList.remove('liked');
+        } else {
+            console.error('Error:', data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+        </script>
+    <!-- <script>
+        $(document).ready(function() {
+            $('.like-btn').click(function() {
+                var placeId = $(this).data('place-id');
+                var placeName = $(this).data('place-name');
+                var placeVicinity = $(this).data('place-vicinity');
+                var placePhotoUrl = $(this).data('place-photo-url');
+                var placeRating = $(this).data('place-rating');
+
+                $.ajax({
+                    url: "{{ url_for('like_place') }}",
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({
+                        place_id: placeId,
+                        place_name: placeName,
+                        place_vicinity: placeVicinity,
+                        place_photo_url: placePhotoUrl,
+                        place_rating: placeRating
+                    }),
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('An error occurred while liking the place.');
+                    }
+                });
+            });
+        });
+    </script>-->
+    <script> 
+document.getElementById('currentLocationButton').addEventListener('click', function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            map.setCenter(pos);
+            updateCurrentLocation(pos.lat, pos.lng);
+        }, function() {
+            handleLocationError(true, map.getCenter());
+        });
+    } else {
+        handleLocationError(false, map.getCenter());
+    }
+});
+
+function openNavigation(lat, lng, name, vicinity) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var startLatitude = position.coords.latitude;
+            var startLongitude = position.coords.longitude;
+            var startLocation = startLatitude + ',' + startLongitude;
+            var destinationLocation = lat + ',' + lng;
+            var destinationNameEncoded = encodeURIComponent(name + ', ' + vicinity);
+
+            window.open("https://maps.google.com/maps?saddr=" + startLocation + "&daddr=" + destinationLocation + " (" + destinationNameEncoded + ")");
+        }, function(error) {
+            alert("Error getting your location: " + error.message);
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+
+
+
+
+</script>
+<footer class="footer">
+    &copy; 2024 Tourism Finder. All rights reserved.
+</footer>
+</body>
+</html> 
+
+{% endblock %}
