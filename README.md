@@ -80,12 +80,7 @@ Ensure you have the following installed:
 ## **Contributions**  
 We welcome contributions! Feel free to submit issues, feature requests, or pull requests to improve the system.  
 
-## **License**  
-This project is licensed under the [MIT License](LICENSE).  
-
 ---
 
 ### 🚀 **Start Exploring the World with Tourism Finder!**  
 If you find this project useful, don’t forget to ⭐ star the repository!  
-
-Let me know if you want to tweak or add anything! 😊
