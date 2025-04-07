@@ -81,6 +81,4 @@ Ensure you have the following installed:
 We welcome contributions! Feel free to submit issues, feature requests, or pull requests to improve the system.  
 
 ---
-
-### 🚀 **Start Exploring the World with Tourism Finder!**  
-If you find this project useful, don’t forget to ⭐ star the repository!  
+(This project has been accepted by FICTA-2025 conference)
